@@ -4,7 +4,7 @@
 
 Francisco Javier Márquez Ruiz · Proyecto de Desarrollo de Aplicaciones Web (PDAW) · Curso 2026/27
 
-> Borrador en Markdown. Apartados hechos: 3.1, 3.2, 3.3 y 3.6. Pendientes: 3.4, 3.5 y 3.7.
+> Borrador en Markdown. Apartados hechos: 3.1, 3.2, 3.3, 3.4 y 3.6. Pendientes: 3.5 y 3.7.
 
 ## 3.1. Secuencia de ejecución
 
@@ -161,6 +161,58 @@ Los roles salen del RF1 de la Tarea 2. No son autorizaciones externas, sino regl
 Compruebo cada permiso en el servidor (RNF3). Ocultar un botón en la interfaz no protege nada.
 
 En resumen, la demo solo necesita el alojamiento, Stripe en pruebas y Cloudinary. El resto son trámites de la bodega que aplican cuando la tienda se publique de verdad.
+
+## 3.4. Procedimientos de ejecución
+
+Sigo cuatro procedimientos, siempre en el mismo orden: **desarrollo → versionado → integración → despliegue**. Cada uno tiene una comprobación de cierre, y no paso al siguiente hasta que se cumple. Los comandos exactos están en la guía de instalación (`02_Guia_instalacion.pdf`); aquí solo describo qué hago y cómo sé que he terminado.
+
+### P1. Desarrollo de un módulo
+
+Se aplica a cada actividad de código de 3.1 (A3, A4 y de A6 a A11).
+
+| | Detalle |
+|---|---|
+| **Entradas** | Historia del backlog con su requisito (RFn), caso de uso y pantalla de Figma de la Tarea 2. Entorno local en marcha (BD con el seed cargado) |
+| **Pasos** | 1. Creo una rama `feature/<módulo>` desde `main`.<br>2. Si el módulo toca datos, cambio `schema.ts` y genero la migración.<br>3. Escribo la lógica de negocio y sus tests unitarios.<br>4. Escribo el Route Handler: valida con Zod y comprueba el rol en el servidor.<br>5. Monto la interfaz con los componentes y tokens de `DESIGN.md`.<br>6. Documento cada función nueva con JSDoc |
+| **Salidas** | Código, migración, tests y JSDoc en la rama |
+| **Cierre** | `pnpm typecheck`, `pnpm lint` y `pnpm test` sin errores. Además, pruebo a mano el caso de uso: camino feliz y una excepción |
+
+### P2. Control de versiones
+
+| | Detalle |
+|---|---|
+| **Entradas** | Rama `feature/*` que cumple el cierre de P1 |
+| **Pasos** | 1. Reviso `git status` y `git diff` para no subir secretos ni cambios ajenos al módulo.<br>2. Hago commits pequeños con Conventional Commits (`feat:`, `fix:`, `docs:`...).<br>3. Subo la rama a GitHub y abro un pull request contra `main`.<br>4. Al cerrar cada sprint, marco la versión con una etiqueta (`v0.1.0`, `v0.2.0`...) |
+| **Salidas** | Pull request abierto, historial legible y una etiqueta por sprint |
+| **Cierre** | El pull request enlaza su requisito y no lleva `.env` ni claves |
+
+`main` siempre tiene una versión que funciona. Nunca trabajo directamente sobre ella.
+
+### P3. Integración
+
+| | Detalle |
+|---|---|
+| **Entradas** | Pull request de P2 |
+| **Pasos** | 1. GitHub Actions instala las dependencias con el lockfile.<br>2. Ejecuta lint, typecheck y tests unitarios.<br>3. Aplica las migraciones sobre una BD vacía y compila la aplicación.<br>4. Desde S13 ejecuta también las pruebas E2E con Playwright.<br>5. Reviso el diff del pull request en GitHub antes de fusionar |
+| **Salidas** | Pull request fusionado en `main` |
+| **Cierre** | Todos los checks en verde. Si alguno falla, corrijo la causa en la misma rama; nunca desactivo un test para que pase |
+
+El paso 3 me asegura que las migraciones se pueden aplicar desde cero. En el prototipo anterior no se podía, y lo descubrí tarde (`LESSONS.md`).
+
+### P4. Despliegue
+
+Lo hago la primera vez en S7 (A5), después al cerrar cada sprint y la versión final en S14 (A13).
+
+| | Detalle |
+|---|---|
+| **Entradas** | `main` con todos los checks en verde y una etiqueta de versión. Variables de entorno de producción guardadas en el panel de alwaysdata, no en el repo |
+| **Pasos** | 1. Hago una copia de seguridad de la BD en línea.<br>2. GitHub Actions compila la aplicación (`next build`).<br>3. Sube el resultado a alwaysdata por SSH.<br>4. Aplica las migraciones pendientes sobre la BD en línea.<br>5. Reinicia el sitio desde el panel |
+| **Salidas** | Nueva versión publicada en la URL `alwaysdata.net` |
+| **Cierre** | Prueba de humo en la URL: carga la portada, entro con las tres cuentas demo y hago una compra con tarjeta de prueba de Stripe |
+
+Si la prueba de humo falla, vuelvo a la etiqueta anterior y restauro la copia del paso 1. Así la URL de la demo nunca se queda caída.
+
+En resumen, ningún cambio llega a la demo sin pasar antes por los tests en local, la integración continua y la prueba de humo.
 
 ## 3.6. Asignación y tiempos
 
