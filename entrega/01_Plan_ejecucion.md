@@ -4,7 +4,7 @@
 
 Francisco Javier Márquez Ruiz · Proyecto de Desarrollo de Aplicaciones Web (PDAW) · Curso 2026/27
 
-> Borrador en Markdown. Apartados hechos: 3.1, 3.2, 3.3, 3.4, 3.5 y 3.6. Pendiente: 3.7.
+> Borrador en Markdown con los apartados 3.1 a 3.7.
 
 ## 3.1. Secuencia de ejecución
 
@@ -306,3 +306,84 @@ Dejo un **margen de 46 horas** (un 15 % de la capacidad):
 - **28 horas repartidas** en las semanas con menos carga (S5, S6, S8, S9, S10, S11, S13 y S14).
 
 Si una actividad del camino crítico se retrasa, tiro primero de ese margen. Si no basta, retraso A7 o A5, que tienen holgura. Como último recurso, paso alguna mejora secundaria al MVP2, pero nunca lo que exige la ley (verificación de edad, cookies y textos legales).
+
+## 3.7. Coste de ejecución
+
+Actualizo el presupuesto de la Tarea 2 (apartado 2.5), que el cliente aprobó por **4.900 € con IVA**. Ahora lo calculo a partir de las horas de 3.6 y no a partir de meses, para que cada importe se pueda seguir.
+
+Distingo dos columnas:
+
+- **Coste estimado:** lo que vale el proyecto, incluido mi tiempo y el uso del equipo que ya tengo.
+- **Desembolso real:** el dinero que de verdad pago durante la ejecución de la Tarea 3.
+
+### Personal
+
+Las horas salen de 3.6 (A0 a A17), repartidas por función. Añado las de A1, que hice en la Tarea 2: 30 h de análisis y 50 h de diseño en Figma.
+
+| Función | Horas | Tarifa | Coste estimado | Desembolso real |
+|---|---|---|---|---|
+| Jefe de proyecto y análisis (JP) | 20 + 30 = 50 | 12 €/h | 600,00 € | 0 € |
+| Diseñador UI/UX (UX) | 8 + 50 = 58 | 12 €/h | 696,00 € | 0 € |
+| Desarrollador full-stack (DEV) | 168 | 10 €/h | 1.680,00 € | 0 € |
+| Administrador de sistemas (SIS) | 20 | 12 €/h | 240,00 € | 0 € |
+| Tester (QA) | 16 | 10 €/h | 160,00 € | 0 € |
+| Redactor técnico (DOC) | 22 | 10 €/h | 220,00 € | 0 € |
+| **Subtotal** | **334** | | **3.596,00 €** | **0 €** |
+| IVA (21 %) | | | 755,16 € | |
+| **Personal con IVA** | | | **4.351,16 €** | |
+
+Las tarifas son de perfil junior recién titulado, en la misma línea que la Tarea 2. Pongo 2 € más por hora a las funciones de decisión (JP, UX y SIS), porque un error en ellas afecta a todo lo demás. El desembolso es 0 € porque el trabajo lo hago yo: es el valor de mi tiempo, no un pago a otra persona.
+
+### Equipos
+
+| Recurso | Base de cálculo | Coste estimado | Desembolso real |
+|---|---|---|---|
+| Portátil de desarrollo | Valor de 1.000 €, vida útil de 4 años (48 meses), 4 meses de uso: 1.000 / 48 × 4 | 83,33 € | 0 € |
+| Móvil de pruebas | Uso puntual en A12 y A16 | No lo imputo | 0 € |
+| Segundo equipo | Prestado para A15 | 0 € | 0 € |
+| **Subtotal** | | **83,33 €** | **0 €** |
+
+El portátil ya lo tenía, así que no lo presupuesto como una compra. Solo imputo la parte de su vida útil que gasto en el proyecto (amortización lineal).
+
+### Software
+
+Todo el software es libre o usa un plan gratuito: Node.js, Next.js, MariaDB, VS Code, Git, Docker, Vitest, Playwright, GitHub, Figma, Notion, Cloudinary y Stripe en modo pruebas. **Subtotal: 0 €** de coste y de desembolso. Stripe solo cobra comisión por venta real, y esa comisión la paga la bodega cuando la tienda venda, no la ejecución del proyecto.
+
+### Servicios
+
+| Servicio | Cantidad y tarifa | Periodo | Coste estimado | Desembolso real |
+|---|---|---|---|---|
+| Alojamiento de la demo (alwaysdata Free) | 0 €/mes | S7-S16 | 0 € | 0 € |
+| Servidor de la tienda real (VPS) | 50 €/mes | Primer año | 600,00 € | 0 € (se contrata al publicar) |
+| Correo electrónico | 8 cuentas | Primer año | 50,00 € | 0 € (se contrata al publicar) |
+| Dominio `.es` | 1 | Primer año | 15,00 € | 0 € (se contrata al publicar) |
+| Certificado SSL | Let's Encrypt | Primer año | 0 € | 0 € |
+| Conexión a internet | Fibra propia, ya pagada | 4 meses | No la imputo | 0 € |
+| **Subtotal** | | | **665,00 €** | **0 €** |
+
+**Contingencia:** si el plan Free de alwaysdata se queda corto (riesgo de 3.5), paso al Plus: 5 € + 21 % de IVA = 6,05 €/mes. En 4 meses serían 24,20 €. No lo sumo al total porque solo se paga si ocurre.
+
+### Total
+
+| Partida | Coste estimado | Desembolso real |
+|---|---|---|
+| Personal (con IVA) | 4.351,16 € | 0 € |
+| Equipos | 83,33 € | 0 € |
+| Software | 0 € | 0 € |
+| Servicios (primer año) | 665,00 € | 0 € |
+| **Total** | **5.099,49 €** | **0 €** (24,20 € si hay contingencia) |
+
+### Diferencias con la Tarea 2
+
+| Concepto | Tarea 2 | Tarea 3 | Diferencia | Motivo |
+|---|---|---|---|---|
+| Personal con IVA | 4.235,00 € | 4.351,16 € | +116,16 € | Calculo por horas reales y añado las funciones de tester y redactor técnico, que la Tarea 3 exige |
+| Equipos | 0 € | 83,33 € | +83,33 € | Antes no valoraba el portátil. Ahora imputo su amortización |
+| Software | 0 € | 0 € | 0 € | Sin cambios |
+| Servicios | 665,00 € | 665,00 € | 0 € | Igual para la tienda real. La demo va en alwaysdata Free a coste 0 |
+| **Total** | **4.900,00 €** | **5.099,49 €** | **+199,49 €** | |
+
+El coste estimado sube un 4 %. Mantengo el precio pactado de 4.900 € con el cliente, así que la diferencia la asumo yo como menor beneficio. Además, el desembolso real durante la ejecución es 0 €, porque la demo funciona entera con recursos propios y gratuitos.
+
+En resumen, el proyecto sigue siendo viable con el presupuesto aprobado, y el único gasto real llega al publicar la tienda, con el servidor, el dominio y el correo que ya estaban previstos.
+
