@@ -68,8 +68,8 @@ Parto de los recursos de la Tarea 2 (apartados 2.1 a 2.4) y los ato a las activi
 | pnpm | 9 | A2-A15 | Gratuito, pnpm.io | `corepack enable` |
 | Git + GitHub | Git 2.4x, repositorio privado | A2-A17 | Gratuito | Clave SSH en mi cuenta |
 | GitHub Actions | Runner `ubuntu-latest` | A2, A12 | Gratuito, 2.000 min/mes en privados | Flujo `ci.yml` en el repo |
-| Docker y Docker Compose | Docker 27, Compose v2 | A2, A3, A15 | Gratuito, docker.com | Solo en local: levanta la BD y el correo de pruebas |
-| MariaDB (compatible con MySQL) | 11.4 LTS (imagen `mariadb:11.4`) | A3-A17 | Gratuito, en contenedor | Misma versión que en alwaysdata. Usuario de la app sin permisos de `root` |
+| Docker y Docker Compose | Docker 27, Compose v2 | A2, A3, A15 | Gratuito, docker.com | Solo en local y solo para la BD y el correo de pruebas. Es opcional: la guía explica también MySQL instalado a mano |
+| MySQL | 8.4 LTS (imagen `mysql:8.4`) | A3-A17 | Gratuito, en contenedor | Misma versión mayor que Aiven. Usuario de la app sin permisos de `root` |
 | VS Code | Última estable | A2-A14 | Gratuito | ESLint, Prettier y Tailwind CSS IntelliSense |
 | Vitest y Playwright | 1.3 / 1.42 (Chromium, Firefox, WebKit) | A4, A9, A10, A12 | Dependencias del proyecto | `pnpm install`; Playwright descarga sus navegadores la primera vez |
 | Figma, Notion y Lighthouse | Planes gratuitos / Chrome DevTools | A0, A7, A12 | Gratuitos | Diseños y backlog de la Tarea 2 con mi cuenta |
@@ -86,20 +86,20 @@ Se instalan con `pnpm install` desde el lockfile: **Next.js 14.2** (con React 18
 | Cloudinary | Plan gratuito (25 créditos/mes) | A6, A11 | Gratuito | Claves de API en `.env` |
 | Correo de pruebas | Mailpit en Docker | A4, A10 | Gratuito, local | Captura los correos sin enviarlos |
 | Correo real (SMTP) | Cuentas del dominio | A13, A16 | Contratado en la Tarea 2 | Usuario y clave en `.env` del servidor |
-| Alojamiento de la demo | alwaysdata, plan Free: 1 GB SSD, 256 MB de RAM, ¼ de CPU | A5, A13, A16 | Gratuito y sin caducidad | Node.js 22 y MariaDB desde el panel. Acceso por SSH con clave, sin `root` |
-| Dirección y HTTPS | Subdominio gratuito `alwaysdata.net` + Let's Encrypt | A5, A13 | Incluido en el plan Free | Certificado activado desde el panel |
-| Compilación para producción | GitHub Actions | A5, A13 | Gratuito | `next build` en CI y subida del resultado por SSH |
+| Alojamiento de la app | Vercel, plan Hobby | A5, A13, A16 | Gratuito, sin tarjeta. Uso no comercial | Proyecto enlazado al repo de GitHub. Variables de entorno en el panel de Vercel |
+| BD en línea | Aiven for MySQL, plan Free: 1 CPU, 1 GB de RAM, 1 GB de disco, 76 conexiones | A5, A13, A16 | Gratuito, sin tarjeta y sin caducidad | Cadena de conexión con TLS en las variables de Vercel |
+| Dirección y HTTPS | Subdominio gratuito `vercel.app` con HTTPS automático | A5, A13 | Incluido en el plan Hobby | Admite un dominio propio si lo compro (registro `A` o `CNAME`) |
 
 ### Compatibilidad
 
-- **Next.js 14** necesita Node.js 18.17 o superior. Uso **Node.js 22 LTS** y **MariaDB 11.4** en local, en CI y en alwaysdata, así que no hay diferencias entre entornos.
-- El driver **mysql2** de Drizzle trabaja igual con MySQL y con MariaDB. Aun así, evito lo que no es común a los dos, como el operador `ilike`.
-- **alwaysdata no admite Docker** y 256 MB de RAM no bastan para `next build`. Por eso compilo en GitHub Actions y subo solo el resultado, que con `next start` sí cabe en esa memoria.
+- **Next.js 14** necesita Node.js 18.17 o superior. Uso **Node.js 22 LTS** en local, en CI y en Vercel, y **MySQL 8** en local y en Aiven, así que no hay diferencias entre entornos.
+- El driver **mysql2** de Drizzle es compatible con MySQL 8 y admite TLS, que Aiven exige.
+- **Vercel ejecuta la API como funciones serverless**, y cada una abre sus propias conexiones. Limito el pool de mysql2 a pocas conexiones para no pasar de las 76 de Aiven.
 
 ### Cambios respecto a la Tarea 2
 
-1. **Alojamiento de la demo.** En la Tarea 2 presupuestaba un VPS de 600 € al año. Para la evaluación uso el **plan Free de alwaysdata**: es gratuito, está en la UE (Francia), trae Node.js, MariaDB y HTTPS, y el enunciado recomienda un hosting gratuito. El VPS se queda para la tienda real, cuando el tráfico lo pida.
-2. **Base de datos.** En la Tarea 2 dejaba abierta la elección entre MySQL 8.4 y MariaDB. Ahora me quedo con **MariaDB 11.4** en todos los entornos, porque es lo que ofrece alwaysdata. Es compatible con MySQL y, como pide el enunciado MySQL 8.x, compruebo que los scripts SQL cargan también en MySQL 8.4.
+1. **Alojamiento de la demo.** En la Tarea 2 presupuestaba un VPS de 600 € al año. Para la evaluación uso **Vercel (Hobby) + Aiven MySQL (Free)**: los dos son gratuitos, sin tarjeta, y el enunciado recomienda un hosting gratuito. Vercel está hecho para Next.js y compila por mí. Valoré alwaysdata Free, pero sus 256 MB de RAM se quedan cortos para Next.js, y Oracle Always Free pide tarjeta y recupera las máquinas inactivas. El VPS se queda para la tienda real, porque Hobby no admite uso comercial.
+2. **Base de datos.** En la Tarea 2 dejaba abierta la elección entre MySQL 8.4 y MariaDB. Ahora me quedo solo con **MySQL 8**, porque lo pide el enunciado y es lo que ofrece Aiven. En el prototipo anterior las diferencias con MariaDB me dieron problemas (colaciones y operadores como `ilike`).
 
 En resumen, todo lo que necesito para la demo es propio o gratuito. El VPS, el dominio y el correo de la Tarea 2 solo hacen falta para publicar la tienda real.
 
@@ -111,10 +111,10 @@ Separo las **autorizaciones externas**, que me tiene que dar otra persona o empr
 
 | Necesidad | Quién autoriza | Condición de uso | Estado |
 |---|---|---|---|
-| Alojamiento de la demo | alwaysdata, al aceptar sus condiciones | Plan Free para uso personal: demo académica sin ventas | Pendiente: alta en S7 (A5) |
+| Alojamiento de la demo | Vercel y Aiven, al aceptar sus condiciones | Vercel Hobby solo para uso no comercial: demo académica sin ventas | Pendiente: alta en S7 (A5) |
 | Acceso del profesor al alojamiento | Yo, como titular de la cuenta | Acceso temporal y limitado que retiro al terminar la evaluación. Nunca mi cuenta principal | No necesario salvo que el profesor lo pida. Basta con la URL y las cuentas demo |
 | Repositorio privado | Yo, como propietario en GitHub | Acceso de solo lectura para el profesor si lo pide | Concedido (repo creado) |
-| Dominio de la bodega | La bodega, que es la titular | Solo en la tienda real | No aplica en la demo: uso el subdominio gratuito `alwaysdata.net` |
+| Dominio de la bodega | La bodega, que es la titular | Solo en la tienda real | No aplica en la demo: uso el subdominio gratuito `vercel.app` |
 | Textos, logotipo y fotos de la bodega | La bodega, titular de los derechos | Uso solo en esta tienda | Pendiente de confirmar por escrito. Mientras tanto uso imágenes propias o con licencia libre |
 | Imágenes, iconos, fuentes y librerías de terceros | Su licencia: Unsplash/Pexels, Lucide (ISC), Google Fonts (OFL), MIT y Apache 2.0 | Uso libre, compatible con la GPL-3.0 de mi repositorio | Concedida por la licencia, sin trámite |
 | Pasarela de pago | Stripe | Modo pruebas: solo tarjetas de prueba. Los cobros reales exigen verificar a la bodega como empresa | Modo pruebas concedido. Cobros reales: no aplica en la demo |
@@ -179,12 +179,12 @@ Lo hago la primera vez en S7 (A5), después al cerrar cada sprint y la versión 
 
 | | Detalle |
 |---|---|
-| **Entradas** | `main` con todos los checks en verde y una etiqueta de versión. Variables de entorno de producción guardadas en el panel de alwaysdata, no en el repo |
-| **Pasos** | 1. Hago una copia de seguridad de la BD en línea.<br>2. GitHub Actions compila la aplicación (`next build`).<br>3. Sube el resultado a alwaysdata por SSH.<br>4. Aplica las migraciones pendientes sobre la BD en línea.<br>5. Reinicia el sitio desde el panel |
-| **Salidas** | Nueva versión publicada en la URL `alwaysdata.net` |
+| **Entradas** | `main` con todos los checks en verde y una etiqueta de versión. Variables de entorno de producción guardadas en Vercel y en los secretos de GitHub, no en el repo |
+| **Pasos** | 1. Hago una copia de seguridad de la BD de Aiven con `mysqldump`.<br>2. Un job de GitHub Actions aplica las migraciones pendientes sobre Aiven.<br>3. Fusiono en `main` y Vercel compila y publica la versión solo.<br>4. Antes, en cada pull request, Vercel crea una vista previa con su propia URL donde pruebo el cambio |
+| **Salidas** | Nueva versión publicada en la URL `vercel.app` |
 | **Cierre** | Prueba de humo en la URL: carga la portada, entro con las tres cuentas demo y hago una compra con tarjeta de prueba de Stripe |
 
-Si la prueba de humo falla, vuelvo a la etiqueta anterior y restauro la copia del paso 1. Así la URL de la demo nunca se queda caída.
+Si la prueba de humo falla, vuelvo al despliegue anterior desde el panel de Vercel (*Instant Rollback*) y restauro la copia del paso 1. Así la URL de la demo nunca se queda caída.
 
 En resumen, ningún cambio llega a la demo sin pasar antes por los tests en local, la integración continua y la prueba de humo.
 
@@ -211,10 +211,10 @@ Me baso en la **Ley 31/1995, de 8 de noviembre, de Prevención de Riesgos Labora
 | Riesgo | P/I | Medida preventiva | Responsable | Medios | Actuación si ocurre |
 |---|---|---|---|---|---|
 | Pérdida del código por avería del portátil | B/A | Push a GitHub al terminar cada sesión | DEV | GitHub | Clono el repo en otro equipo con la guía de instalación |
-| Pérdida de datos de la BD en línea | B/A | Copia antes de cada despliegue (P4) y copias diarias de alwaysdata (3 días) | SIS | `mysqldump`, panel de alwaysdata | Restauro la última copia y recargo el seed si hace falta |
-| Despliegue roto | M/A | Despliegue solo desde `main` en verde y prueba de humo (P4) | SIS | GitHub Actions, cuentas demo | Vuelvo a la etiqueta anterior y restauro la copia |
+| Pérdida de datos de la BD en línea | B/A | Copia con `mysqldump` antes de cada despliegue (P4), guardada fuera de Aiven | SIS | `mysqldump`, GitHub Actions | Restauro la última copia y recargo el seed si hace falta |
+| Despliegue roto | M/A | Despliegue solo desde `main` en verde, vista previa por pull request y prueba de humo (P4) | SIS | Vercel, GitHub Actions, cuentas demo | *Instant Rollback* en Vercel y restauro la copia |
 | Migraciones que no se aplican desde cero | M/A | El CI aplica las migraciones sobre una BD vacía en cada pull request (P3) | DEV | GitHub Actions | Corrijo la migración antes de fusionar. Nunca edito una ya aplicada |
-| Falta de memoria en alwaysdata (256 MB) | M/M | Compilo en CI y en el servidor solo ejecuto `next start` | SIS | GitHub Actions | Paso al plan Plus (5 €/mes), que ya está previsto en 3.7 |
+| Límites de Aiven Free (76 conexiones, apagado por inactividad) | M/M | Pool pequeño de conexiones y prueba de humo antes de cada revisión con el cliente | SIS | Panel de Aiven | Enciendo el servicio desde el panel. Si los límites no bastan, paso la BD a TiDB Cloud Starter, también gratuito y compatible con MySQL |
 | Fuga de claves (Stripe, Cloudinary, BD) | B/A | `.env` en `.gitignore`, revisión del diff (P2) y escaneo de secretos de GitHub | DEV | GitHub secret scanning | Revoco la clave en el servicio, genero otra y limpio el historial |
 | Venta de una unidad sin stock | M/A | Stock y pedido en la misma transacción (RNF4), con test unitario | DEV | Transacciones de Drizzle, Vitest | Anulo el pedido, devuelvo el cobro y corrijo el fallo con un test que lo reproduzca |
 | Acceso indebido (roles, inyección SQL, XSS) | M/A | Rol comprobado en el servidor, Zod y consultas parametrizadas (RNF3) | DEV, QA | NextAuth, Zod, Drizzle, `pnpm audit` | Cierro el acceso, reviso el log de acciones y corrijo antes de seguir |
@@ -232,9 +232,9 @@ Calculo una **capacidad de 25 horas por semana**, porque compagino el proyecto c
 |---|---|---|---|---|---|
 | A0 | JP | Notion, correo | 12 | S5-S16 (1 h/sem) | — |
 | A2 | DEV, SIS | Portátil, Docker, GitHub | 10 | S5 | 0 |
-| A3 | DEV | Docker, MariaDB 11.4, Drizzle | 18 | S5-S6 | 0 |
+| A3 | DEV | Docker, MySQL 8.4, Drizzle | 18 | S5-S6 | 0 |
 | A4 | DEV | NextAuth, Zod, Vitest | 20 | S6-S7 | 2 sem |
-| A5 | SIS | alwaysdata, GitHub Actions | 8 | S7 | 6 sem |
+| A5 | SIS | Vercel, Aiven, GitHub Actions | 8 | S7 | 6 sem |
 | A6 | DEV | Next.js, Tailwind, Cloudinary | 30 | S7-S9 | 0 |
 | A7 | DEV, UX | Next.js, Figma | 14 | S8-S9 | 4 sem |
 | A8 | DEV | Zustand, Vitest | 10 | S10 | 0 |
@@ -242,7 +242,7 @@ Calculo una **capacidad de 25 horas por semana**, porque compagino el proyecto c
 | A10 | DEV | Drizzle (transacciones), Vitest | 24 | S11-S12 | 0 |
 | A11 | DEV | TanStack Query, React Hook Form | 26 | S12-S13 | 0 |
 | A12 | QA, UX | Playwright, móvil, GitHub Actions | 18 | S13-S14 | 0 |
-| A13 | SIS | alwaysdata, GitHub Actions | 6 | S14 | 0 |
+| A13 | SIS | Vercel, Aiven, GitHub Actions | 6 | S14 | 0 |
 | A14 | DOC | Procesador de textos, capturas | 22 | S14-S15 | 0 |
 | A15 | QA, SIS | Segundo equipo, guía de instalación | 4 | S15 | 0 |
 | A16 | JP, DEV | URL en línea, cuentas demo | 6 | S15 | 0 |
@@ -315,7 +315,7 @@ Todo el software de 3.2 es libre o usa un plan gratuito. **Subtotal: 0 €**. La
 
 | Servicio | Cantidad y tarifa | Periodo | Coste estimado | Desembolso real |
 |---|---|---|---|---|
-| Alojamiento de la demo (alwaysdata Free) | 0 €/mes | S7-S16 | 0 € | 0 € |
+| Alojamiento de la demo (Vercel Hobby + Aiven Free) | 0 €/mes | S7-S16 | 0 € | 0 € |
 | Servidor de la tienda real (VPS) | 50 €/mes | Primer año | 600,00 € | 0 € (se contrata al publicar) |
 | Correo electrónico | 8 cuentas | Primer año | 50,00 € | 0 € (se contrata al publicar) |
 | Dominio `.es` | 1 | Primer año | 15,00 € | 0 € (se contrata al publicar) |
@@ -323,7 +323,7 @@ Todo el software de 3.2 es libre o usa un plan gratuito. **Subtotal: 0 €**. La
 | Conexión a internet | Fibra propia, ya pagada | 4 meses | No la imputo | 0 € |
 | **Subtotal** | | | **665,00 €** | **0 €** |
 
-**Contingencia:** si el plan Free de alwaysdata se queda corto (riesgo de 3.5), paso al Plus: 5 € + 21 % de IVA = 6,05 €/mes. En 4 meses serían 24,20 €. No lo sumo al total porque solo se paga si ocurre.
+**Contingencia:** si Aiven Free se queda corto (riesgo de 3.5), paso la BD a TiDB Cloud Starter, que también es gratuito. Por eso no reservo dinero para el alojamiento de la demo.
 
 ### Total y diferencias con la Tarea 2
 
@@ -332,9 +332,9 @@ Todo el software de 3.2 es libre o usa un plan gratuito. **Subtotal: 0 €**. La
 | Personal con IVA | 4.235,00 € | 4.351,16 € | +116,16 € | Calculo por horas reales y añado las funciones de tester y redactor técnico, que la Tarea 3 exige |
 | Equipos | 0 € | 83,33 € | +83,33 € | Antes no valoraba el portátil. Ahora imputo su amortización |
 | Software | 0 € | 0 € | 0 € | Sin cambios |
-| Servicios | 665,00 € | 665,00 € | 0 € | Igual para la tienda real. La demo va en alwaysdata Free a coste 0 |
+| Servicios | 665,00 € | 665,00 € | 0 € | Igual para la tienda real. La demo va en Vercel y Aiven a coste 0 |
 | **Total estimado** | **4.900,00 €** | **5.099,49 €** | **+199,49 €** | |
-| **Desembolso real** | | **0 €** | | 24,20 € solo si salta la contingencia |
+| **Desembolso real** | | **0 €** | | La demo solo usa recursos propios y gratuitos |
 
 El coste estimado sube un 4 %. Mantengo el precio pactado de 4.900 € con el cliente, así que la diferencia la asumo yo como menor beneficio. Además, el desembolso real durante la ejecución es 0 €, porque la demo funciona entera con recursos propios y gratuitos.
 
