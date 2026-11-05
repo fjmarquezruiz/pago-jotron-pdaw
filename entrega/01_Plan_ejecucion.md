@@ -71,23 +71,12 @@ Parto de los recursos de la Tarea 2 (apartados 2.1 a 2.4) y los ato a las activi
 | Docker y Docker Compose | Docker 27, Compose v2 | A2, A3, A15 | Gratuito, docker.com | Solo en local: levanta la BD y el correo de pruebas |
 | MariaDB (compatible con MySQL) | 11.4 LTS (imagen `mariadb:11.4`) | A3-A17 | Gratuito, en contenedor | Misma versión que en alwaysdata. Usuario de la app sin permisos de `root` |
 | VS Code | Última estable | A2-A14 | Gratuito | ESLint, Prettier y Tailwind CSS IntelliSense |
-| Vitest | 1.3 | A4, A9, A10 | Dependencia del proyecto | Se instala con `pnpm install` |
-| Playwright | 1.42 (Chromium, Firefox y WebKit) | A12 | Dependencia del proyecto | Descarga de navegadores en la primera ejecución |
-| Lighthouse | El de Chrome DevTools | A12 | Gratuito, en el navegador | Sin preparación |
-| Figma | Plan gratuito | A7, A12 | Diseños aprobados en la Tarea 2 | Acceso de lectura con mi cuenta |
-| Notion | Plan gratuito | A0 | Backlog y Gantt de la Tarea 2 | Página compartida con el cliente |
+| Vitest y Playwright | 1.3 / 1.42 (Chromium, Firefox, WebKit) | A4, A9, A10, A12 | Dependencias del proyecto | `pnpm install`; Playwright descarga sus navegadores la primera vez |
+| Figma, Notion y Lighthouse | Planes gratuitos / Chrome DevTools | A0, A7, A12 | Gratuitos | Diseños y backlog de la Tarea 2 con mi cuenta |
 
 ### Dependencias de la aplicación
 
-| Recurso | Versión | Actividades |
-|---|---|---|
-| Next.js (incluye React) | 14.2 (React 18.3) | A4-A11 |
-| TypeScript | 5.3 | A2-A11 |
-| Tailwind CSS + Shadcn/ui | 3.4 | A6-A11 |
-| Drizzle ORM + drizzle-kit + mysql2 | 0.45 / 0.31 / 3.9 | A3, A6-A11 |
-| NextAuth | 4.24 | A4, A11 |
-| Zod + React Hook Form | 3.22 / 7.51 | A4, A9, A11 |
-| Zustand + TanStack Query | 4.5 / 5 | A8, A11 |
+Se instalan con `pnpm install` desde el lockfile: **Next.js 14.2** (con React 18.3), **TypeScript 5.3**, **Tailwind CSS 3.4** + Shadcn/ui, **Drizzle ORM 0.45** (drizzle-kit 0.31 y mysql2 3.9), **NextAuth 4.24**, **Zod 3.22**, **React Hook Form 7.51**, **Zustand 4.5** y **TanStack Query 5**. Las uso de A3 a A11.
 
 ### Servicios externos
 
@@ -103,11 +92,9 @@ Parto de los recursos de la Tarea 2 (apartados 2.1 a 2.4) y los ato a las activi
 
 ### Compatibilidad
 
-- **Next.js 14** necesita Node.js 18.17 o superior. Uso **Node.js 22 LTS** en local, en CI y en el servidor, así que no hay diferencias entre entornos.
-- **Local y alojamiento usan el mismo motor y versión:** MariaDB 11.4 y Node.js 22. Lo que funciona en el portátil funciona en alwaysdata.
+- **Next.js 14** necesita Node.js 18.17 o superior. Uso **Node.js 22 LTS** y **MariaDB 11.4** en local, en CI y en alwaysdata, así que no hay diferencias entre entornos.
 - El driver **mysql2** de Drizzle trabaja igual con MySQL y con MariaDB. Aun así, evito lo que no es común a los dos, como el operador `ilike`.
 - **alwaysdata no admite Docker** y 256 MB de RAM no bastan para `next build`. Por eso compilo en GitHub Actions y subo solo el resultado, que con `next start` sí cabe en esa memoria.
-- La aplicación funciona en los navegadores que prueba Playwright: Chromium (Chrome y Edge), Firefox y WebKit (Safari).
 
 ### Cambios respecto a la Tarea 2
 
@@ -118,12 +105,7 @@ En resumen, todo lo que necesito para la demo es propio o gratuito. El VPS, el d
 
 ## 3.3. Permisos y autorizaciones
 
-Separo dos cosas que no son lo mismo:
-
-- **Autorizaciones externas:** lo que otra persona o empresa me tiene que permitir para desarrollar y publicar la tienda (alojamiento, recursos ajenos, datos).
-- **Permisos internos:** lo que cada rol puede hacer dentro de la aplicación. Esos los decido yo en el diseño y los compruebo en el servidor.
-
-Distingo también la **demo de evaluación** de la **tienda real**. En la demo no se vende nada, no se cobra y no hay datos de personas reales. Por eso varias autorizaciones de la tienda real no aplican todavía.
+Separo las **autorizaciones externas**, que me tiene que dar otra persona o empresa, de los **permisos internos** de cada rol, que decido yo en el diseño. Distingo también la **demo de evaluación** de la **tienda real**: en la demo no se vende, no se cobra y no hay datos de personas reales, así que varias autorizaciones aún no aplican.
 
 ### Autorizaciones externas
 
@@ -134,22 +116,18 @@ Distingo también la **demo de evaluación** de la **tienda real**. En la demo n
 | Repositorio privado | Yo, como propietario en GitHub | Acceso de solo lectura para el profesor si lo pide | Concedido (repo creado) |
 | Dominio de la bodega | La bodega, que es la titular | Solo en la tienda real | No aplica en la demo: uso el subdominio gratuito `alwaysdata.net` |
 | Textos, logotipo y fotos de la bodega | La bodega, titular de los derechos | Uso solo en esta tienda | Pendiente de confirmar por escrito. Mientras tanto uso imágenes propias o con licencia libre |
-| Imágenes de terceros (Unsplash, Pexels) | La licencia de cada banco | Uso gratuito sin atribución obligatoria | Concedida por la licencia, sin trámite |
-| Iconos y fuentes | Licencias Lucide (ISC) y Google Fonts (OFL) | Uso libre, incluido comercial | Concedida por la licencia |
-| Librerías del proyecto | Licencias MIT y Apache 2.0 | Compatibles con la licencia GPL-3.0 de mi repositorio | Concedida por la licencia |
-| Pasarela de pago | Stripe | Modo pruebas: solo tarjetas de prueba, sin cobros reales | Concedida al crear la cuenta |
-| Cobros reales con tarjeta | Stripe, tras verificar a la bodega como empresa | La cuenta tiene que estar a nombre de la bodega | No aplica en la demo |
+| Imágenes, iconos, fuentes y librerías de terceros | Su licencia: Unsplash/Pexels, Lucide (ISC), Google Fonts (OFL), MIT y Apache 2.0 | Uso libre, compatible con la GPL-3.0 de mi repositorio | Concedida por la licencia, sin trámite |
+| Pasarela de pago | Stripe | Modo pruebas: solo tarjetas de prueba. Los cobros reales exigen verificar a la bodega como empresa | Modo pruebas concedido. Cobros reales: no aplica en la demo |
 | Imágenes en Cloudinary | Cloudinary, con sus condiciones del plan gratuito | Límite de 25 créditos al mes | Concedida al crear la cuenta |
-| Datos personales en la demo | Nadie: solo uso datos inventados del seed | Sin datos de personas reales | No aplica: el RGPD protege datos de personas reales y aquí no los hay |
-| Datos personales en la tienda real | La bodega, responsable del tratamiento | Contrato de encargo del tratamiento conmigo (art. 28 del RGPD) | No aplica hasta publicar la tienda real |
+| Datos personales | En la tienda real, la bodega como responsable del tratamiento | Contrato de encargo del tratamiento conmigo (art. 28 del RGPD) | No aplica en la demo: solo hay datos inventados del seed |
 | Venta online de alcohol | La bodega, con sus registros y licencias como productora | Venta solo a mayores de 18 años | No aplica en la demo: no vende. La verificación de edad (RF2) ya va en el MVP1 |
 | Instalar en el segundo equipo | El dueño del equipo | Instalo Docker y el proyecto, y lo desinstalo al terminar | Pendiente: lo pido antes de S15 (A15) |
 
-No he presentado ninguna autorización que no tenga. Las que dependen de la bodega quedan como pendientes o no aplicables hasta que la tienda pase a producción.
+No presento ninguna autorización que no tenga: las que dependen de la bodega quedan pendientes o no aplicables hasta producción.
 
 ### Permisos internos de la aplicación
 
-Los roles salen del RF1 de la Tarea 2. No son autorizaciones externas, sino reglas del diseño:
+Salen del RF1 de la Tarea 2 y los compruebo siempre en el servidor (RNF3):
 
 | Rol | Puede | No puede |
 |---|---|---|
@@ -157,8 +135,6 @@ Los roles salen del RF1 de la Tarea 2. No son autorizaciones externas, sino regl
 | Cliente | Comprar, ver y cancelar sus pedidos en 24 h, gestionar su perfil | Entrar en el panel de administración |
 | Editor | Gestionar el catálogo, el blog y las páginas | Gestionar usuarios, roles, pedidos o el log |
 | Administrador | Todo lo del editor, además de usuarios, roles, pedidos, envíos y log | Eliminar o degradar al último administrador |
-
-Compruebo cada permiso en el servidor (RNF3). Ocultar un botón en la interfaz no protege nada.
 
 En resumen, la demo solo necesita el alojamiento, Stripe en pruebas y Cloudinary. El resto son trámites de la bodega que aplican cuando la tienda se publique de verdad.
 
@@ -183,10 +159,8 @@ Se aplica a cada actividad de código de 3.1 (A3, A4 y de A6 a A11).
 |---|---|
 | **Entradas** | Rama `feature/*` que cumple el cierre de P1 |
 | **Pasos** | 1. Reviso `git status` y `git diff` para no subir secretos ni cambios ajenos al módulo.<br>2. Hago commits pequeños con Conventional Commits (`feat:`, `fix:`, `docs:`...).<br>3. Subo la rama a GitHub y abro un pull request contra `main`.<br>4. Al cerrar cada sprint, marco la versión con una etiqueta (`v0.1.0`, `v0.2.0`...) |
-| **Salidas** | Pull request abierto, historial legible y una etiqueta por sprint |
+| **Salidas** | Pull request abierto y una etiqueta por sprint. `main` siempre funciona: nunca trabajo sobre ella |
 | **Cierre** | El pull request enlaza su requisito y no lleva `.env` ni claves |
-
-`main` siempre tiene una versión que funciona. Nunca trabajo directamente sobre ella.
 
 ### P3. Integración
 
@@ -250,16 +224,7 @@ En resumen, para la salud me basta con un puesto bien colocado y pausas. En lo t
 
 ## 3.6. Asignación y tiempos
 
-Hago el proyecto solo, así que asumo todas las funciones. Las separo para saber qué papel tengo en cada actividad y para valorar cada parte en el coste (3.7):
-
-- **JP**, jefe de proyecto: planificación, informes y revisiones con el cliente.
-- **DEV**, desarrollador full-stack: base de datos, API e interfaz.
-- **UX**, diseñador UI/UX: revisar que la maquetación sigue los diseños de Figma.
-- **QA**, tester: pruebas E2E, responsive, accesibilidad e instalación de prueba.
-- **SIS**, administrador de sistemas: entorno, alojamiento y despliegue.
-- **DOC**, redactor técnico: guías de instalación y uso.
-
-Como tester, pruebo contra los casos de uso de la Tarea 2 y no contra mi código. Además, en la beta (A16) prueba el cliente, que no conoce el código.
+Hago el proyecto solo, así que asumo todas las funciones. Las separo para saber qué papel tengo en cada actividad y valorarlas en 3.7: **JP** (jefe de proyecto), **DEV** (desarrollador full-stack), **UX** (diseñador UI/UX), **QA** (tester), **SIS** (administrador de sistemas) y **DOC** (redactor técnico). Como tester, pruebo contra los casos de uso de la Tarea 2 y no contra mi código; además, en la beta (A16) prueba el cliente.
 
 Calculo una **capacidad de 25 horas por semana**, porque compagino el proyecto con el resto del ciclo. De S5 a S16 son 12 semanas, es decir, **300 horas**.
 
@@ -311,10 +276,7 @@ Si una actividad del camino crítico se retrasa, tiro primero de ese margen. Si 
 
 Actualizo el presupuesto de la Tarea 2 (apartado 2.5), que el cliente aprobó por **4.900 € con IVA**. Ahora lo calculo a partir de las horas de 3.6 y no a partir de meses, para que cada importe se pueda seguir.
 
-Distingo dos columnas:
-
-- **Coste estimado:** lo que vale el proyecto, incluido mi tiempo y el uso del equipo que ya tengo.
-- **Desembolso real:** el dinero que de verdad pago durante la ejecución de la Tarea 3.
+Distingo el **coste estimado** (lo que vale el proyecto, incluido mi tiempo y el equipo que ya tengo) del **desembolso real** (el dinero que de verdad pago durante la ejecución).
 
 ### Personal
 
@@ -347,7 +309,7 @@ El portátil ya lo tenía, así que no lo presupuesto como una compra. Solo impu
 
 ### Software
 
-Todo el software es libre o usa un plan gratuito: Node.js, Next.js, MariaDB, VS Code, Git, Docker, Vitest, Playwright, GitHub, Figma, Notion, Cloudinary y Stripe en modo pruebas. **Subtotal: 0 €** de coste y de desembolso. Stripe solo cobra comisión por venta real, y esa comisión la paga la bodega cuando la tienda venda, no la ejecución del proyecto.
+Todo el software de 3.2 es libre o usa un plan gratuito. **Subtotal: 0 €**. La comisión de Stripe solo se cobra por venta real y la paga la bodega, no la ejecución del proyecto.
 
 ### Servicios
 
@@ -363,17 +325,7 @@ Todo el software es libre o usa un plan gratuito: Node.js, Next.js, MariaDB, VS 
 
 **Contingencia:** si el plan Free de alwaysdata se queda corto (riesgo de 3.5), paso al Plus: 5 € + 21 % de IVA = 6,05 €/mes. En 4 meses serían 24,20 €. No lo sumo al total porque solo se paga si ocurre.
 
-### Total
-
-| Partida | Coste estimado | Desembolso real |
-|---|---|---|
-| Personal (con IVA) | 4.351,16 € | 0 € |
-| Equipos | 83,33 € | 0 € |
-| Software | 0 € | 0 € |
-| Servicios (primer año) | 665,00 € | 0 € |
-| **Total** | **5.099,49 €** | **0 €** (24,20 € si hay contingencia) |
-
-### Diferencias con la Tarea 2
+### Total y diferencias con la Tarea 2
 
 | Concepto | Tarea 2 | Tarea 3 | Diferencia | Motivo |
 |---|---|---|---|---|
@@ -381,7 +333,8 @@ Todo el software es libre o usa un plan gratuito: Node.js, Next.js, MariaDB, VS 
 | Equipos | 0 € | 83,33 € | +83,33 € | Antes no valoraba el portátil. Ahora imputo su amortización |
 | Software | 0 € | 0 € | 0 € | Sin cambios |
 | Servicios | 665,00 € | 665,00 € | 0 € | Igual para la tienda real. La demo va en alwaysdata Free a coste 0 |
-| **Total** | **4.900,00 €** | **5.099,49 €** | **+199,49 €** | |
+| **Total estimado** | **4.900,00 €** | **5.099,49 €** | **+199,49 €** | |
+| **Desembolso real** | | **0 €** | | 24,20 € solo si salta la contingencia |
 
 El coste estimado sube un 4 %. Mantengo el precio pactado de 4.900 € con el cliente, así que la diferencia la asumo yo como menor beneficio. Además, el desembolso real durante la ejecución es 0 €, porque la demo funciona entera con recursos propios y gratuitos.
 
