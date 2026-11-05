@@ -1,0 +1,208 @@
+erDiagram
+    User ||--o{ Orders : "realiza"
+    User ||--o{ Address : "tiene"
+    User |o--o{ Post : "publica"
+    User |o--o{ AuditLog : "genera"
+
+    Address |o--o{ Orders : "se envía a"
+    Address |o--o{ Orders : "se factura a"
+    OrderStatus ||--o{ Orders : "clasifica"
+    CancellationType |o--o{ Orders : "motiva"
+    ShippingType ||--o{ Orders : "ofrece"
+    Orders ||--o| Invoice : "genera"
+    Orders ||--o{ OrderProduct : "incluye"
+    Product ||--o{ OrderProduct : "se vende"
+    Orders ||--o{ OrderEvent : "incluye"
+    Event ||--o{ OrderEvent : "se contrata"
+    User ||--o{ CartProduct : "guarda en el carrito"
+    Product ||--o{ CartProduct : "está en"
+    User ||--o{ CartEvent : "guarda en el carrito"
+    Event ||--o{ CartEvent : "está en"
+
+    Winery ||--o{ Product : "elabora"
+    GuaranteeOfOrigin ||--o{ Product : "ampara"
+    Product }o--o{ Category : "pertenece (ProductCategory)"
+    Product }o--o{ Grape : "compuesto por (ProductGrape)"
+    EventType ||--o{ Event : "clasifica"
+
+    Post }o--o{ BlogCategory : "etiqueta (PostBlogCategory)"
+    Post }o--o{ Product : "referencia (PostProduct)"
+    Post }o--o{ Winery : "referencia (PostWinery)"
+    Post }o--o{ GuaranteeOfOrigin : "referencia (PostGuaranteeOfOrigin)"
+    Post }o--o{ Category : "referencia (PostCategory)"
+
+    User {
+        int UserID PK
+        varchar Name
+        varchar LastName
+        date BirthDate
+        varchar PasswordHash
+        varchar IDCard UK
+        varchar Email UK
+        varchar Phone
+        enum Role
+        boolean IsActive
+        datetime RegistrationDate
+    }
+    Address {
+        int AddressID PK
+        int UserID FK
+        varchar Phone
+        enum StreetType
+        varchar StreetName
+        varchar Number
+        varchar PostalCode
+        varchar City
+        varchar Province
+        varchar Country
+        enum AddressType
+        boolean IsActive
+    }
+    Product {
+        int ProductID PK
+        enum ProductType
+        varchar Name
+        int WineryID FK
+        int GuaranteeOfOriginID FK
+        decimal Price
+        decimal TaxRate
+        int Stock
+        int Vintage
+        varchar Image
+        text Description
+        text VisualNote
+        text AromaNote
+        text PalateNote
+        int Capacity
+        varchar Size
+        decimal MinTemperature
+        decimal MaxTemperature
+        decimal AlcoholContent
+        text FoodPairing
+        boolean IsBlocked
+        datetime CreatedAt
+    }
+    Category {
+        int CategoryID PK
+        varchar Name UK
+    }
+    GuaranteeOfOrigin {
+        int GuaranteeOfOriginID PK
+        varchar Name UK
+        boolean IsBlocked
+    }
+    Winery {
+        int WineryID PK
+        varchar Name UK
+        varchar City
+        varchar Province
+        varchar Country
+        boolean IsBlocked
+    }
+    Grape {
+        int GrapeID PK
+        varchar Name UK
+    }
+    EventType {
+        int EventTypeID PK
+        varchar Name UK
+    }
+    Event {
+        int EventID PK
+        varchar Title UK
+        text Description
+        int EventTypeID FK
+        varchar Location
+        datetime StartsAt
+        datetime EndsAt
+        decimal Price
+        decimal TaxRate
+        int MaxParticipants
+        int AvailableSeats
+        boolean IsOpen
+    }
+    OrderStatus {
+        int StatusID PK
+        varchar Name UK
+    }
+    CancellationType {
+        int CancellationTypeID PK
+        text Description
+    }
+    ShippingType {
+        int ShippingTypeID PK
+        varchar Name UK
+        decimal Cost
+    }
+    Orders {
+        int OrderID PK
+        int UserID FK
+        int ShippingAddressID FK
+        int BillingAddressID FK
+        enum PaymentMethod
+        int ShippingTypeID FK
+        decimal ShippingCost
+        decimal Total
+        int StatusID FK
+        datetime StatusUpdatedAt
+        enum CancelledBy
+        int CancellationTypeID FK
+        datetime CreatedAt
+        date ShippingDate
+    }
+    Invoice {
+        int InvoiceID PK
+        int OrderID FK
+        varchar Number UK
+        datetime IssueDate
+        decimal TaxBase
+        decimal TaxAmount
+        decimal Total
+    }
+    OrderProduct {
+        int OrderID PK
+        int ProductID PK
+        int Quantity
+        decimal UnitPrice
+        decimal TaxRate
+    }
+    OrderEvent {
+        int OrderID PK
+        int EventID PK
+        int Quantity
+        decimal UnitPrice
+        decimal TaxRate
+    }
+    CartProduct {
+        int UserID PK
+        int ProductID PK
+        int Quantity
+        datetime AddedAt
+    }
+    CartEvent {
+        int UserID PK
+        int EventID PK
+        int Quantity
+        datetime AddedAt
+    }
+    Post {
+        int PostID PK
+        varchar Title UK
+        text Content
+        varchar ImageUrl
+        datetime PublishedAt
+        datetime UpdatedAt
+        boolean IsPublished
+        int UserID FK
+    }
+    BlogCategory {
+        int BlogCategoryID PK
+        varchar Name UK
+    }
+    AuditLog {
+        int AuditLogID PK
+        int UserID FK
+        text Action
+        datetime LoggedAt
+        text Details
+    }

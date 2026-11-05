@@ -1,0 +1,62 @@
+@startuml
+left to right direction
+
+actor "Usuario anonimo" as Anonimo
+actor "Cliente" as Cliente
+actor "Editor" as Editor
+actor "Administrador" as Administrador
+actor "Pasarela de pago" as Pasarela <<sistema externo>>
+
+Anonimo <|-- Cliente
+Cliente <|-- Editor
+Editor <|-- Administrador
+
+rectangle "E-commerce Pago de Jotron" {
+  usecase "CU14 Verificar edad" as UC14
+  usecase "CU1 Registrar usuario" as UC01
+  usecase "CU2 Iniciar sesion" as UC02
+  usecase "CU16 Recuperar contrasena" as UC16
+  usecase "CU5 Navegar, buscar y filtrar catalogo" as UC05
+  usecase "CU19 Consultar ficha de vino y relacionados" as UC19
+  usecase "CU4 Gestionar carrito" as UC04
+  usecase "CU15 Ver carrito" as UC15
+  usecase "CU3 Realizar compra" as UC03
+  usecase "CU6 Gestionar perfil y direcciones" as UC06
+  usecase "CU7 Cancelar pedido" as UC07
+  usecase "CU8 Descargar factura" as UC08
+  usecase "CU9 Gestionar catalogo de productos" as UC09
+  usecase "CU17 Gestionar visitas y catas" as UC17
+  usecase "CU10 Gestionar blog" as UC10
+  usecase "CU18 Consultar paginas informativas\ny legales" as UC18
+  usecase "CU11 Gestionar pedidos y estados" as UC11
+  usecase "CU12 Gestionar usuarios y roles" as UC12
+  usecase "CU13 Consultar log, bloquear ventas\ny gestionar envios" as UC13
+}
+
+Anonimo --> UC14
+Anonimo --> UC01
+Anonimo --> UC02
+Anonimo --> UC05
+Anonimo --> UC19
+Anonimo --> UC04
+Anonimo --> UC15
+Anonimo --> UC18
+
+Cliente --> UC03
+Cliente --> UC06
+Cliente --> UC07
+Cliente --> UC08
+
+Editor --> UC09
+Editor --> UC17
+Editor --> UC10
+
+Administrador --> UC11
+Administrador --> UC12
+Administrador --> UC13
+
+UC03 -- Pasarela
+UC03 ..> UC15 : <<include>>
+UC16 ..> UC02 : <<extend>>
+UC19 ..> UC05 : <<extend>>
+@enduml
