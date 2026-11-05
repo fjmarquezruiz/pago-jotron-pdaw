@@ -12,6 +12,7 @@ Repositorio limpio para la **Tarea 3 (Desarrollo y planificación de la ejecuci�
 | `LESSONS.md` | Errores ya vividos en la versión anterior |
 | `docs/tarea02/` | Fuente de verdad funcional: requisitos, casos de uso, BD, interfaz, planificación |
 | `docs/tarea02/entrega/` | Memoria entregada de la Tarea 2, enunciado y rúbrica |
+| `docs/tarea02/google-docs/` | Memoria de la Tarea 2 y versión con BBDD ampliada (exportadas de Google Docs) |
 | `docs/extended/` | Modelo de datos ampliado y scripts SQL |
 | `docs/tarea03/` | Enunciado de la Tarea 3 y plan de trabajo |
 
