@@ -68,8 +68,8 @@ Parto de los recursos de la Tarea 2 (apartados 2.1 a 2.4) y los ato a las activi
 | pnpm | 9 | A2-A15 | Gratuito, pnpm.io | `corepack enable` |
 | Git + GitHub | Git 2.4x, repositorio privado | A2-A17 | Gratuito | Clave SSH en mi cuenta |
 | GitHub Actions | Runner `ubuntu-latest` | A2, A12 | Gratuito, 2.000 min/mes en privados | Flujo `ci.yml` en el repo |
-| Docker y Docker Compose | Docker 27, Compose v2 | A2, A3, A5, A13, A15 | Gratuito, docker.com | Instalado en el portátil y en el servidor |
-| MySQL | 8.4 LTS (imagen `mysql:8.4`) | A3-A17 | Gratuito, en contenedor | Usuario de la app sin permisos de `root` |
+| Docker y Docker Compose | Docker 27, Compose v2 | A2, A3, A15 | Gratuito, docker.com | Solo en local: levanta la BD y el correo de pruebas |
+| MariaDB (compatible con MySQL) | 11.4 LTS (imagen `mariadb:11.4`) | A3-A17 | Gratuito, en contenedor | Misma versión que en alwaysdata. Usuario de la app sin permisos de `root` |
 | VS Code | Última estable | A2-A14 | Gratuito | ESLint, Prettier y Tailwind CSS IntelliSense |
 | Vitest | 1.3 | A4, A9, A10 | Dependencia del proyecto | Se instala con `pnpm install` |
 | Playwright | 1.42 (Chromium, Firefox y WebKit) | A12 | Dependencia del proyecto | Descarga de navegadores en la primera ejecución |
@@ -97,25 +97,24 @@ Parto de los recursos de la Tarea 2 (apartados 2.1 a 2.4) y los ato a las activi
 | Cloudinary | Plan gratuito (25 créditos/mes) | A6, A11 | Gratuito | Claves de API en `.env` |
 | Correo de pruebas | Mailpit en Docker | A4, A10 | Gratuito, local | Captura los correos sin enviarlos |
 | Correo real (SMTP) | Cuentas del dominio | A13, A16 | Contratado en la Tarea 2 | Usuario y clave en `.env` del servidor |
-| Servidor en línea | VPS con Ubuntu Server 24.04 LTS | A5, A13, A16 | Alquiler en la nube | Acceso por SSH con clave; sin contraseña de `root` |
-| Dominio y HTTPS | Dominio `.es` + Let's Encrypt (Certbot) | A5, A13 | Dominio de pago, certificado gratuito | DNS apuntando al VPS; renovación automática |
-| Nginx | Imagen `nginx:alpine` | A5, A13 | Gratuito | Proxy inverso delante de Next.js |
+| Alojamiento de la demo | alwaysdata, plan Free: 1 GB SSD, 256 MB de RAM, ¼ de CPU | A5, A13, A16 | Gratuito y sin caducidad | Node.js 22 y MariaDB desde el panel. Acceso por SSH con clave, sin `root` |
+| Dirección y HTTPS | Subdominio gratuito `alwaysdata.net` + Let's Encrypt | A5, A13 | Incluido en el plan Free | Certificado activado desde el panel |
+| Compilación para producción | GitHub Actions | A5, A13 | Gratuito | `next build` en CI y subida del resultado por SSH |
 
 ### Compatibilidad
 
 - **Next.js 14** necesita Node.js 18.17 o superior. Uso **Node.js 22 LTS** en local, en CI y en el servidor, así que no hay diferencias entre entornos.
-- **Local y servidor usan las mismas imágenes de Docker** (MySQL 8.4 y Node 22). Lo que funciona en el portátil funciona en el VPS.
-- El driver **mysql2** de Drizzle es compatible con MySQL 8.4.
+- **Local y alojamiento usan el mismo motor y versión:** MariaDB 11.4 y Node.js 22. Lo que funciona en el portátil funciona en alwaysdata.
+- El driver **mysql2** de Drizzle trabaja igual con MySQL y con MariaDB. Aun así, evito lo que no es común a los dos, como el operador `ilike`.
+- **alwaysdata no admite Docker** y 256 MB de RAM no bastan para `next build`. Por eso compilo en GitHub Actions y subo solo el resultado, que con `next start` sí cabe en esa memoria.
 - La aplicación funciona en los navegadores que prueba Playwright: Chromium (Chrome y Edge), Firefox y WebKit (Safari).
 
-### Cambio respecto a la Tarea 2
+### Cambios respecto a la Tarea 2
 
-En la Tarea 2 dejaba abierta la elección entre **MySQL 8.4 y MariaDB**. Ahora me quedo solo con **MySQL 8.4 LTS**, por dos motivos:
+1. **Alojamiento de la demo.** En la Tarea 2 presupuestaba un VPS de 600 € al año. Para la evaluación uso el **plan Free de alwaysdata**: es gratuito, está en la UE (Francia), trae Node.js, MariaDB y HTTPS, y el enunciado recomienda un hosting gratuito. El VPS se queda para la tienda real, cuando el tráfico lo pida.
+2. **Base de datos.** En la Tarea 2 dejaba abierta la elección entre MySQL 8.4 y MariaDB. Ahora me quedo con **MariaDB 11.4** en todos los entornos, porque es lo que ofrece alwaysdata. Es compatible con MySQL y, como pide el enunciado MySQL 8.x, compruebo que los scripts SQL cargan también en MySQL 8.4.
 
-- El enunciado pide MySQL 8.x.
-- En el prototipo anterior las diferencias entre MariaDB y MySQL me dieron problemas, como las colaciones y algunos operadores. Con un solo motor en todos los entornos los evito.
-
-En resumen, todo lo que necesito es propio o gratuito salvo el VPS, el dominio y el correo, que ya estaban en el presupuesto de la Tarea 2.
+En resumen, todo lo que necesito para la demo es propio o gratuito. El VPS, el dominio y el correo de la Tarea 2 solo hacen falta para publicar la tienda real.
 
 ## 3.3. Permisos y autorizaciones
 
@@ -130,10 +129,10 @@ Distingo también la **demo de evaluación** de la **tienda real**. En la demo n
 
 | Necesidad | Quién autoriza | Condición de uso | Estado |
 |---|---|---|---|
-| Alojamiento de la demo (VPS) | Proveedor del VPS, al aceptar sus condiciones | Cuenta a mi nombre, solo para la demo académica | Pendiente: alta en S7 (A5) |
-| Acceso del profesor al alojamiento | Yo, como titular de la cuenta | Usuario SSH temporal sin `sudo`, que borro al terminar la evaluación. Nunca mi cuenta principal | No necesario salvo que el profesor lo pida. Basta con la URL y las cuentas demo |
+| Alojamiento de la demo | alwaysdata, al aceptar sus condiciones | Plan Free para uso personal: demo académica sin ventas | Pendiente: alta en S7 (A5) |
+| Acceso del profesor al alojamiento | Yo, como titular de la cuenta | Acceso temporal y limitado que retiro al terminar la evaluación. Nunca mi cuenta principal | No necesario salvo que el profesor lo pida. Basta con la URL y las cuentas demo |
 | Repositorio privado | Yo, como propietario en GitHub | Acceso de solo lectura para el profesor si lo pide | Concedido (repo creado) |
-| Dominio de la bodega | La bodega, que es la titular | Solo en la tienda real | No aplica en la demo: uso la IP o un subdominio gratuito del proveedor |
+| Dominio de la bodega | La bodega, que es la titular | Solo en la tienda real | No aplica en la demo: uso el subdominio gratuito `alwaysdata.net` |
 | Textos, logotipo y fotos de la bodega | La bodega, titular de los derechos | Uso solo en esta tienda | Pendiente de confirmar por escrito. Mientras tanto uso imágenes propias o con licencia libre |
 | Imágenes de terceros (Unsplash, Pexels) | La licencia de cada banco | Uso gratuito sin atribución obligatoria | Concedida por la licencia, sin trámite |
 | Iconos y fuentes | Licencias Lucide (ISC) y Google Fonts (OFL) | Uso libre, incluido comercial | Concedida por la licencia |
@@ -182,9 +181,9 @@ Calculo una **capacidad de 25 horas por semana**, porque compagino el proyecto c
 |---|---|---|---|---|---|
 | A0 | JP | Notion, correo | 12 | S5-S16 (1 h/sem) | — |
 | A2 | DEV, SIS | Portátil, Docker, GitHub | 10 | S5 | 0 |
-| A3 | DEV | Docker, MySQL 8, Drizzle | 18 | S5-S6 | 0 |
+| A3 | DEV | Docker, MariaDB 11.4, Drizzle | 18 | S5-S6 | 0 |
 | A4 | DEV | NextAuth, Zod, Vitest | 20 | S6-S7 | 2 sem |
-| A5 | SIS | VPS, dominio, Let's Encrypt | 8 | S7 | 6 sem |
+| A5 | SIS | alwaysdata, GitHub Actions | 8 | S7 | 6 sem |
 | A6 | DEV | Next.js, Tailwind, Cloudinary | 30 | S7-S9 | 0 |
 | A7 | DEV, UX | Next.js, Figma | 14 | S8-S9 | 4 sem |
 | A8 | DEV | Zustand, Vitest | 10 | S10 | 0 |
@@ -192,7 +191,7 @@ Calculo una **capacidad de 25 horas por semana**, porque compagino el proyecto c
 | A10 | DEV | Drizzle (transacciones), Vitest | 24 | S11-S12 | 0 |
 | A11 | DEV | TanStack Query, React Hook Form | 26 | S12-S13 | 0 |
 | A12 | QA, UX | Playwright, móvil, GitHub Actions | 18 | S13-S14 | 0 |
-| A13 | SIS | VPS, Docker, Nginx | 6 | S14 | 0 |
+| A13 | SIS | alwaysdata, GitHub Actions | 6 | S14 | 0 |
 | A14 | DOC | Procesador de textos, capturas | 22 | S14-S15 | 0 |
 | A15 | QA, SIS | Segundo equipo, guía de instalación | 4 | S15 | 0 |
 | A16 | JP, DEV | URL en línea, cuentas demo | 6 | S15 | 0 |
