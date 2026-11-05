@@ -4,7 +4,7 @@
 
 Francisco Javier Márquez Ruiz · Proyecto de Desarrollo de Aplicaciones Web (PDAW) · Curso 2026/27
 
-> Borrador en Markdown. Apartados hechos: 3.1 y 3.6. Pendientes: 3.2, 3.3, 3.4, 3.5 y 3.7.
+> Borrador en Markdown. Apartados hechos: 3.1, 3.2 y 3.6. Pendientes: 3.3, 3.4, 3.5 y 3.7.
 
 ## 3.1. Secuencia de ejecución
 
@@ -46,6 +46,76 @@ Los **tests unitarios** no son una actividad aparte. Los escribo dentro de A4, A
 El **camino crítico** es A2 → A3 → A6 → A8 → A9 → A10 → A11 → A12 → A13 → A14 → A15 → A17. Un retraso en cualquiera de ellas mueve la entrega. Las páginas informativas (A7) y el primer despliegue (A5) tienen holgura y las uso para absorber retrasos.
 
 En resumen, mantengo las 16 semanas y el MVP1 de la Tarea 2, pero ordeno el trabajo para tener algo probado y desplegado en cada sprint.
+
+## 3.2. Recursos y logística
+
+Parto de los recursos de la Tarea 2 (apartados 2.1 a 2.4) y los ato a las actividades de 3.1. Las versiones de las dependencias quedan fijadas en `package.json` y en `pnpm-lock.yaml`, así que en otro equipo se instalan exactamente las mismas.
+
+### Equipos y conectividad
+
+| Recurso | Versión o detalle | Actividades | Disponibilidad | Preparación o acceso |
+|---|---|---|---|---|
+| Portátil de desarrollo | Intel Core i7, 16 GB de RAM, SSD | A0-A17 | Propio, todo el proyecto | Ya preparado. Copia del repo en GitHub |
+| Móvil de pruebas | Smartphone propio, navegador actualizado | A12, A16 | Propio | Acceso a la URL en línea por 4G o wifi |
+| Segundo equipo | PC sin el entorno instalado | A15 | Lo reservo para S15 | Solo instalo lo que diga la guía de instalación |
+| Conexión a internet | Fibra de 1 Gbps | Todas | Propia | Necesaria para pnpm, Docker Hub, Stripe y despliegue |
+
+### Software de desarrollo y pruebas
+
+| Recurso | Versión | Actividades | Disponibilidad | Preparación o acceso |
+|---|---|---|---|---|
+| Node.js | 22 LTS | A2-A13 | Gratuito, nodejs.org | Instalador oficial |
+| pnpm | 9 | A2-A15 | Gratuito, pnpm.io | `corepack enable` |
+| Git + GitHub | Git 2.4x, repositorio privado | A2-A17 | Gratuito | Clave SSH en mi cuenta |
+| GitHub Actions | Runner `ubuntu-latest` | A2, A12 | Gratuito, 2.000 min/mes en privados | Flujo `ci.yml` en el repo |
+| Docker y Docker Compose | Docker 27, Compose v2 | A2, A3, A5, A13, A15 | Gratuito, docker.com | Instalado en el portátil y en el servidor |
+| MySQL | 8.4 LTS (imagen `mysql:8.4`) | A3-A17 | Gratuito, en contenedor | Usuario de la app sin permisos de `root` |
+| VS Code | Última estable | A2-A14 | Gratuito | ESLint, Prettier y Tailwind CSS IntelliSense |
+| Vitest | 1.3 | A4, A9, A10 | Dependencia del proyecto | Se instala con `pnpm install` |
+| Playwright | 1.42 (Chromium, Firefox y WebKit) | A12 | Dependencia del proyecto | Descarga de navegadores en la primera ejecución |
+| Lighthouse | El de Chrome DevTools | A12 | Gratuito, en el navegador | Sin preparación |
+| Figma | Plan gratuito | A7, A12 | Diseños aprobados en la Tarea 2 | Acceso de lectura con mi cuenta |
+| Notion | Plan gratuito | A0 | Backlog y Gantt de la Tarea 2 | Página compartida con el cliente |
+
+### Dependencias de la aplicación
+
+| Recurso | Versión | Actividades |
+|---|---|---|
+| Next.js (incluye React) | 14.2 (React 18.3) | A4-A11 |
+| TypeScript | 5.3 | A2-A11 |
+| Tailwind CSS + Shadcn/ui | 3.4 | A6-A11 |
+| Drizzle ORM + drizzle-kit + mysql2 | 0.45 / 0.31 / 3.9 | A3, A6-A11 |
+| NextAuth | 4.24 | A4, A11 |
+| Zod + React Hook Form | 3.22 / 7.51 | A4, A9, A11 |
+| Zustand + TanStack Query | 4.5 / 5 | A8, A11 |
+
+### Servicios externos
+
+| Recurso | Versión o plan | Actividades | Disponibilidad | Preparación o acceso |
+|---|---|---|---|---|
+| Stripe | Cuenta en modo pruebas | A9, A10, A12, A16 | Gratuito; en real cobra comisión por venta | Claves de prueba en `.env`, nunca en el repo |
+| Cloudinary | Plan gratuito (25 créditos/mes) | A6, A11 | Gratuito | Claves de API en `.env` |
+| Correo de pruebas | Mailpit en Docker | A4, A10 | Gratuito, local | Captura los correos sin enviarlos |
+| Correo real (SMTP) | Cuentas del dominio | A13, A16 | Contratado en la Tarea 2 | Usuario y clave en `.env` del servidor |
+| Servidor en línea | VPS con Ubuntu Server 24.04 LTS | A5, A13, A16 | Alquiler en la nube | Acceso por SSH con clave; sin contraseña de `root` |
+| Dominio y HTTPS | Dominio `.es` + Let's Encrypt (Certbot) | A5, A13 | Dominio de pago, certificado gratuito | DNS apuntando al VPS; renovación automática |
+| Nginx | Imagen `nginx:alpine` | A5, A13 | Gratuito | Proxy inverso delante de Next.js |
+
+### Compatibilidad
+
+- **Next.js 14** necesita Node.js 18.17 o superior. Uso **Node.js 22 LTS** en local, en CI y en el servidor, así que no hay diferencias entre entornos.
+- **Local y servidor usan las mismas imágenes de Docker** (MySQL 8.4 y Node 22). Lo que funciona en el portátil funciona en el VPS.
+- El driver **mysql2** de Drizzle es compatible con MySQL 8.4.
+- La aplicación funciona en los navegadores que prueba Playwright: Chromium (Chrome y Edge), Firefox y WebKit (Safari).
+
+### Cambio respecto a la Tarea 2
+
+En la Tarea 2 dejaba abierta la elección entre **MySQL 8.4 y MariaDB**. Ahora me quedo solo con **MySQL 8.4 LTS**, por dos motivos:
+
+- El enunciado pide MySQL 8.x.
+- En el prototipo anterior las diferencias entre MariaDB y MySQL me dieron problemas, como las colaciones y algunos operadores. Con un solo motor en todos los entornos los evito.
+
+En resumen, todo lo que necesito es propio o gratuito salvo el VPS, el dominio y el correo, que ya estaban en el presupuesto de la Tarea 2.
 
 ## 3.6. Asignación y tiempos
 
