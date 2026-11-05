@@ -4,7 +4,7 @@
 
 Francisco Javier Márquez Ruiz · Proyecto de Desarrollo de Aplicaciones Web (PDAW) · Curso 2026/27
 
-> Borrador en Markdown. Apartados hechos: 3.1, 3.2 y 3.6. Pendientes: 3.3, 3.4, 3.5 y 3.7.
+> Borrador en Markdown. Apartados hechos: 3.1, 3.2, 3.3 y 3.6. Pendientes: 3.4, 3.5 y 3.7.
 
 ## 3.1. Secuencia de ejecución
 
@@ -116,6 +116,52 @@ En la Tarea 2 dejaba abierta la elección entre **MySQL 8.4 y MariaDB**. Ahora m
 - En el prototipo anterior las diferencias entre MariaDB y MySQL me dieron problemas, como las colaciones y algunos operadores. Con un solo motor en todos los entornos los evito.
 
 En resumen, todo lo que necesito es propio o gratuito salvo el VPS, el dominio y el correo, que ya estaban en el presupuesto de la Tarea 2.
+
+## 3.3. Permisos y autorizaciones
+
+Separo dos cosas que no son lo mismo:
+
+- **Autorizaciones externas:** lo que otra persona o empresa me tiene que permitir para desarrollar y publicar la tienda (alojamiento, recursos ajenos, datos).
+- **Permisos internos:** lo que cada rol puede hacer dentro de la aplicación. Esos los decido yo en el diseño y los compruebo en el servidor.
+
+Distingo también la **demo de evaluación** de la **tienda real**. En la demo no se vende nada, no se cobra y no hay datos de personas reales. Por eso varias autorizaciones de la tienda real no aplican todavía.
+
+### Autorizaciones externas
+
+| Necesidad | Quién autoriza | Condición de uso | Estado |
+|---|---|---|---|
+| Alojamiento de la demo (VPS) | Proveedor del VPS, al aceptar sus condiciones | Cuenta a mi nombre, solo para la demo académica | Pendiente: alta en S7 (A5) |
+| Acceso del profesor al alojamiento | Yo, como titular de la cuenta | Usuario SSH temporal sin `sudo`, que borro al terminar la evaluación. Nunca mi cuenta principal | No necesario salvo que el profesor lo pida. Basta con la URL y las cuentas demo |
+| Repositorio privado | Yo, como propietario en GitHub | Acceso de solo lectura para el profesor si lo pide | Concedido (repo creado) |
+| Dominio de la bodega | La bodega, que es la titular | Solo en la tienda real | No aplica en la demo: uso la IP o un subdominio gratuito del proveedor |
+| Textos, logotipo y fotos de la bodega | La bodega, titular de los derechos | Uso solo en esta tienda | Pendiente de confirmar por escrito. Mientras tanto uso imágenes propias o con licencia libre |
+| Imágenes de terceros (Unsplash, Pexels) | La licencia de cada banco | Uso gratuito sin atribución obligatoria | Concedida por la licencia, sin trámite |
+| Iconos y fuentes | Licencias Lucide (ISC) y Google Fonts (OFL) | Uso libre, incluido comercial | Concedida por la licencia |
+| Librerías del proyecto | Licencias MIT y Apache 2.0 | Compatibles con la licencia GPL-3.0 de mi repositorio | Concedida por la licencia |
+| Pasarela de pago | Stripe | Modo pruebas: solo tarjetas de prueba, sin cobros reales | Concedida al crear la cuenta |
+| Cobros reales con tarjeta | Stripe, tras verificar a la bodega como empresa | La cuenta tiene que estar a nombre de la bodega | No aplica en la demo |
+| Imágenes en Cloudinary | Cloudinary, con sus condiciones del plan gratuito | Límite de 25 créditos al mes | Concedida al crear la cuenta |
+| Datos personales en la demo | Nadie: solo uso datos inventados del seed | Sin datos de personas reales | No aplica: el RGPD protege datos de personas reales y aquí no los hay |
+| Datos personales en la tienda real | La bodega, responsable del tratamiento | Contrato de encargo del tratamiento conmigo (art. 28 del RGPD) | No aplica hasta publicar la tienda real |
+| Venta online de alcohol | La bodega, con sus registros y licencias como productora | Venta solo a mayores de 18 años | No aplica en la demo: no vende. La verificación de edad (RF2) ya va en el MVP1 |
+| Instalar en el segundo equipo | El dueño del equipo | Instalo Docker y el proyecto, y lo desinstalo al terminar | Pendiente: lo pido antes de S15 (A15) |
+
+No he presentado ninguna autorización que no tenga. Las que dependen de la bodega quedan como pendientes o no aplicables hasta que la tienda pase a producción.
+
+### Permisos internos de la aplicación
+
+Los roles salen del RF1 de la Tarea 2. No son autorizaciones externas, sino reglas del diseño:
+
+| Rol | Puede | No puede |
+|---|---|---|
+| Anónimo | Ver el catálogo y el blog, usar el carrito, registrarse | Comprar sin cuenta ni entrar en el área de cliente |
+| Cliente | Comprar, ver y cancelar sus pedidos en 24 h, gestionar su perfil | Entrar en el panel de administración |
+| Editor | Gestionar el catálogo, el blog y las páginas | Gestionar usuarios, roles, pedidos o el log |
+| Administrador | Todo lo del editor, además de usuarios, roles, pedidos, envíos y log | Eliminar o degradar al último administrador |
+
+Compruebo cada permiso en el servidor (RNF3). Ocultar un botón en la interfaz no protege nada.
+
+En resumen, la demo solo necesita el alojamiento, Stripe en pruebas y Cloudinary. El resto son trámites de la bodega que aplican cuando la tienda se publique de verdad.
 
 ## 3.6. Asignación y tiempos
 
