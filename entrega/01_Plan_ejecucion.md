@@ -4,7 +4,7 @@
 
 Francisco Javier Márquez Ruiz · Proyecto de Desarrollo de Aplicaciones Web (PDAW) · Curso 2026/27
 
-> Borrador en Markdown. Apartados hechos: 3.1, 3.2, 3.3, 3.4 y 3.6. Pendientes: 3.5 y 3.7.
+> Borrador en Markdown. Apartados hechos: 3.1, 3.2, 3.3, 3.4, 3.5 y 3.6. Pendiente: 3.7.
 
 ## 3.1. Secuencia de ejecución
 
@@ -213,6 +213,40 @@ Lo hago la primera vez en S7 (A5), después al cerrar cada sprint y la versión 
 Si la prueba de humo falla, vuelvo a la etiqueta anterior y restauro la copia del paso 1. Así la URL de la demo nunca se queda caída.
 
 En resumen, ningún cambio llega a la demo sin pasar antes por los tests en local, la integración continua y la prueba de humo.
+
+## 3.5. Prevención de riesgos
+
+Separo dos tipos de riesgo: los **del puesto de trabajo**, que afectan a mi salud, y los **técnicos**, que afectan al proyecto. Como trabajo solo y por cuenta propia, soy el responsable de los dos. Indico la función (de 3.6) que se encarga de cada uno.
+
+Valoro cada riesgo con su probabilidad (P) y su impacto (I): alto (A), medio (M) o bajo (B).
+
+### Prevención laboral
+
+Me baso en la **Ley 31/1995, de 8 de noviembre, de Prevención de Riesgos Laborales (LPRL)** y en el **Real Decreto 488/1997, de 14 de abril**, sobre el trabajo con pantallas de visualización. Trabajo unas 25 horas a la semana delante del portátil, así que los riesgos son los propios de ese puesto.
+
+| Riesgo | P/I | Medida preventiva | Responsable | Medios | Actuación si ocurre |
+|---|---|---|---|---|---|
+| Dolor de espalda y cuello por mala postura | A/M | Pantalla a la altura de los ojos, silla regulable y pies apoyados | JP | Soporte de portátil, teclado y ratón externos | Pausas más frecuentes y estiramientos. Si dura más de una semana, voy al médico |
+| Fatiga visual | A/M | Regla 20-20-20: cada 20 min miro a 6 m durante 20 s. Luz natural lateral y sin reflejos | JP | Modo oscuro, tamaño de letra cómodo | Bajo el brillo, acorto las sesiones y reviso la vista si persiste |
+| Sedentarismo y sobrecarga en muñecas | M/M | Pausa de 5-10 min cada hora y sesiones de 2 h como máximo | JP | Temporizador de pausas, reposamuñecas | Ejercicios de muñeca y paso a sesiones más cortas |
+| Estrés por plazos | M/A | Plan de 3.6 con 25 h/semana como tope y 46 h de margen | JP | Tablero de Notion con el avance | Tiro del margen o paso tareas no críticas al MVP2 antes de alargar las jornadas |
+| Riesgo eléctrico | B/A | Regleta con protección y cables recogidos | JP | Regleta con interruptor y protección | Desconecto el equipo y no lo manipulo encendido |
+
+### Riesgos técnicos
+
+| Riesgo | P/I | Medida preventiva | Responsable | Medios | Actuación si ocurre |
+|---|---|---|---|---|---|
+| Pérdida del código por avería del portátil | B/A | Push a GitHub al terminar cada sesión | DEV | GitHub | Clono el repo en otro equipo con la guía de instalación |
+| Pérdida de datos de la BD en línea | B/A | Copia antes de cada despliegue (P4) y copias diarias de alwaysdata (3 días) | SIS | `mysqldump`, panel de alwaysdata | Restauro la última copia y recargo el seed si hace falta |
+| Despliegue roto | M/A | Despliegue solo desde `main` en verde y prueba de humo (P4) | SIS | GitHub Actions, cuentas demo | Vuelvo a la etiqueta anterior y restauro la copia |
+| Migraciones que no se aplican desde cero | M/A | El CI aplica las migraciones sobre una BD vacía en cada pull request (P3) | DEV | GitHub Actions | Corrijo la migración antes de fusionar. Nunca edito una ya aplicada |
+| Falta de memoria en alwaysdata (256 MB) | M/M | Compilo en CI y en el servidor solo ejecuto `next start` | SIS | GitHub Actions | Paso al plan Plus (5 €/mes), que ya está previsto en 3.7 |
+| Fuga de claves (Stripe, Cloudinary, BD) | B/A | `.env` en `.gitignore`, revisión del diff (P2) y escaneo de secretos de GitHub | DEV | GitHub secret scanning | Revoco la clave en el servicio, genero otra y limpio el historial |
+| Venta de una unidad sin stock | M/A | Stock y pedido en la misma transacción (RNF4), con test unitario | DEV | Transacciones de Drizzle, Vitest | Anulo el pedido, devuelvo el cobro y corrijo el fallo con un test que lo reproduzca |
+| Acceso indebido (roles, inyección SQL, XSS) | M/A | Rol comprobado en el servidor, Zod y consultas parametrizadas (RNF3) | DEV, QA | NextAuth, Zod, Drizzle, `pnpm audit` | Cierro el acceso, reviso el log de acciones y corrijo antes de seguir |
+| Retraso en el camino crítico | M/A | Margen de 46 h y holguras de 3.6 | JP | Plan de 3.6, informe semanal | Uso el margen y, si no basta, paso mejoras no obligatorias al MVP2 |
+
+En resumen, para la salud me basta con un puesto bien colocado y pausas. En lo técnico, la mayoría de los riesgos los frenan GitHub, la integración continua y las copias antes de desplegar, que ya están en los procedimientos de 3.4.
 
 ## 3.6. Asignación y tiempos
 
